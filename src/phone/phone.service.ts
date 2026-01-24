@@ -12,17 +12,17 @@ export class PhoneService {
     const [phones, total] = await Promise.all([
       this.prisma.phone.findMany({
         where: {
-          is_deleted: false
+          isDeleted: false
         },
         skip,
         take: pageSize,
         orderBy: {
-          update_time: 'desc'
+          id: 'asc',
         }
       }),
       this.prisma.phone.count({
         where: {
-          is_deleted: false
+          isDeleted: false
         }
       })
     ]);
@@ -40,6 +40,19 @@ export class PhoneService {
         total,
         totalPages: Math.ceil(total / pageSize)
       }
+    };
+  }
+
+  async add(phone: { name: string; price: number; stock: number, isDiscount?: boolean }) {
+    const createdPhone = await this.prisma.phone.create({
+      data: {
+        ...phone,
+        isDeleted: false
+      }
+    });
+    return {
+      ...createdPhone,
+      id: Number(createdPhone.id) // 将 BigInt 转换为 Number
     };
   }
 }

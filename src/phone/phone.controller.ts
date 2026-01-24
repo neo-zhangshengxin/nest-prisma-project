@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { PhoneService } from './phone.service';
 
 @Controller('phone')
@@ -16,4 +16,10 @@ export class PhoneController {
     };
     return this.phoneService.findAll(pagination);
   }
+
+  @Post('add')
+  async add(@Body() phone: { name: string; price: number; stock: number, isDiscount?: boolean }) {
+    return this.phoneService.add(phone);
+  }
+
 }

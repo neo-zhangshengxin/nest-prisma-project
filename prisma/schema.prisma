@@ -48,13 +48,13 @@ model countrylanguage {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model phone {
-  id          BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
-  name        String   @db.VarChar(100)
-  price       Decimal  @db.Decimal(10, 2)
-  stock       Int      @default(0) @db.UnsignedInt
-  is_discount Boolean  @default(false)
-  update_time DateTime @default(now()) @db.Timestamp(0)
-  is_deleted  Boolean  @default(false)
+  id         BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  name       String   @db.VarChar(100)
+  price      Decimal  @db.Decimal(10, 2)
+  stock      Int      @default(0) @db.UnsignedInt
+  isDiscount Boolean  @default(false) @map("is_discount")
+  updateTime DateTime @default(now()) @map("update_time") @db.Timestamp(0)
+  isDeleted  Boolean  @default(false) @map("is_deleted")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
