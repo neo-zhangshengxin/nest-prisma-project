@@ -6,7 +6,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
   catch(exception: any, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
-    
+
     // 记录错误堆栈，方便后端调试
     console.error('Global error:', exception);
     
@@ -22,7 +22,17 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     } else if (exception.code === 'P2002') { // Prisma 的唯一约束错误码
       status = HttpStatus.BAD_REQUEST;
       message = '数据已存在，请检查输入';
+    } else if (exception.message && exception.message.includes('Unknown argument')) {
+      // 处理未知参数错误，提取参数名
+      const unknownArgMatch = exception.message.match(/Unknown argument `(\w+)`/);
+      if (unknownArgMatch && unknownArgMatch[1]) {
+        const paramName = unknownArgMatch[1];
+        message = `识别到未知参数 ${paramName}，请确认参数名是否正确`;
+      } else {
+        message = '识别到未知参数，请确认参数名是否正确';
+      }
     } else if (exception.message) {
+      // 其他错误，使用完整的错误信息作为友好提示
       message = exception.message;
     }
     
