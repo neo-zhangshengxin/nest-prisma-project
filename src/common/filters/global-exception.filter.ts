@@ -31,6 +31,17 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       } else {
         message = '识别到未知参数，请确认参数名是否正确';
       }
+    } else if (exception.message && exception.message.includes('Invalid value provided')) {
+      // 处理参数值无效错误，提取参数名、期望类型和实际类型
+      const invalidValueMatch = exception.message.match(/Argument `(\w+)`: Invalid value provided\. Expected (.+), provided (.+)\./);
+      if (invalidValueMatch && invalidValueMatch[1] && invalidValueMatch[2] && invalidValueMatch[3]) {
+        const paramName = invalidValueMatch[1];
+        const expectedType = invalidValueMatch[2];
+        const providedType = invalidValueMatch[3];
+        message = `参数 ${paramName} 类型错误，期望 ${expectedType} 类型，实际提供了 ${providedType} 类型`;
+      } else {
+        message = '参数值无效，请检查输入';
+      }
     } else if (exception.message) {
       // 其他错误，使用完整的错误信息作为友好提示
       message = exception.message;
