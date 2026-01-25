@@ -23,6 +23,7 @@
 - 将生成的 Prisma Client 输出到指定目录（如 `prisma/generated`）
 - 确保代码中使用的 `this.prisma` 对象包含最新的模型定义和方法
 
+***
 
 ### pnpm prisma db pull 作用
 
@@ -44,6 +45,7 @@
 
 当执行 `npx prisma db pull` 命令时，Prisma 会读取 `prisma.config.ts` 文件中的配置，从而知道要连接到哪个数据库并拉取其结构。
 
+***
 
 ### Prisma @map 注解的使用
 
@@ -109,6 +111,7 @@ async add(phone: { name: string; price: number; isDiscount?: boolean }) {
 4. **确保类型安全**：Prisma 自动处理类型映射
 5. **确保配置持久化**：`db pull` 不会移除注解
 
+***
 
 ### 将 where 条件独立成变量的最佳实践
 
