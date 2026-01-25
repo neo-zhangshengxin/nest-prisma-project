@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Prisma } from '../../generated/prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
@@ -9,11 +10,23 @@ export class PhoneService {
     const { page = 1, pageSize = 10 } = pagination;
     const skip = (page - 1) * pageSize;
 
+    // 定义独立的 where 变量（带类型注解）
+    const where: Prisma.phoneWhereInput = {
+      isDeleted: false,
+      name: {
+        startsWith: '三星',
+      },
+      price: {
+        lte: 8000,
+      },
+      stock: {
+        gt: 0,
+      },
+    };
+
     const [phones, total] = await Promise.all([
       this.prisma.phone.findMany({
-        where: {
-          isDeleted: false,
-        },
+        where,
         skip,
         take: pageSize,
         orderBy: {
@@ -21,9 +34,7 @@ export class PhoneService {
         },
       }),
       this.prisma.phone.count({
-        where: {
-          isDeleted: false,
-        },
+        where,
       }),
     ]);
 
