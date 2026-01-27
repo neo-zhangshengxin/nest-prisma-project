@@ -1,8 +1,10 @@
-import { ExceptionFilter, Catch, ArgumentsHost, HttpStatus } from '@nestjs/common';
+import { ExceptionFilter, Catch, ArgumentsHost, HttpStatus, Logger } from '@nestjs/common';
 import { Request, Response } from 'express';
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
+  private readonly logger = new Logger(GlobalExceptionFilter.name);
+
   catch(exception: any, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
@@ -12,7 +14,10 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const traceId = (request as any).traceId || 'unknown';
 
     // 记录错误堆栈，方便后端调试（包含 traceId）
-    console.error(`[${traceId}] Global error:`, exception);
+    this.logger.error(
+      `[${traceId}] Global error: ${exception.message}, Code: ${exception.code || 'N/A'}`,
+      exception instanceof Error ? exception.stack : undefined
+    );
     
     // 默认状态码和错误信息
     let status = HttpStatus.INTERNAL_SERVER_ERROR;

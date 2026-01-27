@@ -44,7 +44,7 @@ export class PhoneService {
     }));
 
     return {
-      data: convertedPhones,
+      phones: convertedPhones,
       pagination: {
         page,
         pageSize,
