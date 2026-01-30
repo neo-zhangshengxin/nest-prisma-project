@@ -1,6 +1,7 @@
 import { Injectable, LoggerService } from '@nestjs/common';
 import * as winston from 'winston';
 import * as path from 'path';
+import DailyRotateFile from 'winston-daily-rotate-file';
 
 @Injectable()
 export class WinstonLoggerService implements LoggerService {
@@ -50,6 +51,21 @@ export class WinstonLoggerService implements LoggerService {
           maxsize: 5242880, // 5MB
           maxFiles: 10,
           tailable: true,
+          format: winston.format.combine(
+            winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss.SSS' }),
+            winston.format.printf(({ timestamp, level, message }) => {
+              return `${timestamp} ${level.toUpperCase()}: ${message}`;
+            })
+          )
+        }),
+        // 额外的按小时命名的日志文件（包含所有日志）
+        new DailyRotateFile({
+          filename: path.join(logDir, '%DATE%-combined.log'),
+          datePattern: 'YYYY-MM-DD-HH',
+          zippedArchive: true,
+          maxSize: '20m',
+          maxFiles: '14d',
+          level: 'info', // 记录所有级别的日志
           format: winston.format.combine(
             winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss.SSS' }),
             winston.format.printf(({ timestamp, level, message }) => {
